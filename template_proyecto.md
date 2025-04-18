@@ -113,10 +113,7 @@ Esta capa gestiona el almacenamiento estructurado de toda la información críti
 
 Tecnologías: MySQL
 Características clave: consistencia, normalización, seguridad en el acceso a datos.
-### 6.1.4. Módulo de Integración y APIs
-Este módulo permite la comunicación del sistema con otras plataformas o servicios externos, como sistemas académicos existentes, plataformas de calificaciones o directorios institucionales. Proporciona interfaces de programación (APIs REST, por ejemplo) que permiten importar y exportar datos de forma segura y estandarizada.
 
-Características clave: interoperabilidad, estandarización, seguridad en las comunicaciones.
 ### 6.1.5. Módulo de Notificaciones
 Responsable del envío de alertas automáticas a padres o tutores ante situaciones de inasistencia. Puede operar mediante correo electrónico, SMS o sistemas de mensajería instantánea. Este módulo se configura según las preferencias de cada institución.
 
