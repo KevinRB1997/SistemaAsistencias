@@ -90,7 +90,9 @@ Gestionará el acceso al sistema mediante mecanismos de autenticación (usuario 
 Esta arquitectura de componentes está pensada para operar de manera cohesiva dentro de una estructura monolítica durante el prototipado inicial, permitiendo la validación funcional del sistema con una arquitectura sencilla pero completa. A futuro, esta estructura modular facilitará la migración hacia esquemas más distribuidos o escalables conforme evolucionen las necesidades del sistema.
 # 5. Estrategias Arquitectónicas
 ## 5.1. Estrategias Clave
-Describir las estrategias arquitectónicas clave y cómo abordan las preocupaciones específicas de las partes interesadas.
+La estrategia arquitectónica del sistema de control de asistencia estudiantil se basa inicialmente en una arquitectura de monolito modular. Esta decisión permite aprovechar los beneficios inmediatos del monolito, tales como simplicidad de desarrollo, facilidad en la implementación inicial y reducción en la complejidad operativa. Sin embargo, se ha diseñado con módulos claramente separados por responsabilidad funcional, lo que facilita futuras transiciones arquitectónicas.
+
+El enfoque modular permite que, en etapas posteriores, ciertos módulos puedan evolucionar de forma independiente hacia una arquitectura de microservicios, particularmente aquellos que experimenten mayor demanda o requieran escalabilidad independiente. Esto asegurará que el sistema mantenga su rendimiento y disponibilidad, adaptándose gradualmente a necesidades crecientes sin implicar rediseños profundos o interrupciones significativas del servicio..
 
 # 6. Arquitectura del Sistema
 ## 6.1. Resumen de Capas/Módulos
