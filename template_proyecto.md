@@ -75,17 +75,15 @@ Los docentes podrán acceder a su panel personalizado donde visualizarán la lis
 
 El sistema estará compuesto por los siguientes componentes de alto nivel:
 
-# 1. Interfaz de Usuario (Frontend):
+### 4.2.1. Interfaz de Usuario (Frontend):
 Desarrollada para ser accesible desde navegadores web y dispositivos móviles, esta interfaz proporcionará vistas personalizadas para docentes, personal administrativo y eventualmente padres de familia. Su diseño estará orientado a la usabilidad, con navegación clara y operaciones intuitivas.
-# 2. Lógica de Negocio (Backend):
+### 4.2.2. Lógica de Negocio (Backend):
 Este componente gestionará los procesos centrales del sistema, como el registro y validación de asistencias, generación de reportes, programación de notificaciones y gestión de roles y permisos de usuarios. Se encargará también de interactuar con las bases de datos y servicios externos necesarios.
-# 3. Base de Datos:
+### 4.2.3. Base de Datos:
 Almacenará toda la información relacionada con los usuarios, estudiantes, docentes, secciones académicas, registros de asistencia y logs del sistema. Se diseñará bajo principios de normalización y seguridad, contemplando integridad referencial y acceso controlado.
-# 4. Módulo de Integración:
-Este componente permitirá la conexión del sistema con otras plataformas institucionales, como bases de datos académicas o sistemas de calificaciones. Se incluirán APIs o mecanismos de importación/exportación para facilitar dicha interoperabilidad.
-# 5. Modulo de Notificaciones:
+### 4.2.4. Modulo de Notificaciones:
 Encargado de emitir alertas automáticas a los padres de familia mediante correo electrónico, SMS o notificaciones dentro de una aplicación complementaria, este módulo garantizará una comunicación eficaz ante inasistencias.
-# 6. Módulo de Seguridad y Autenticación:
+### 4.2.5. Módulo de Seguridad y Autenticación:
 Gestionará el acceso al sistema mediante mecanismos de autenticación (usuario y contraseña, y eventualmente autenticación de doble factor), control de sesiones y asignación de roles, asegurando que cada usuario acceda solo a la información que le corresponde.
 Esta arquitectura de componentes está pensada para operar de manera cohesiva dentro de una estructura monolítica durante el prototipado inicial, permitiendo la validación funcional del sistema con una arquitectura sencilla pero completa. A futuro, esta estructura modular facilitará la migración hacia esquemas más distribuidos o escalables conforme evolucionen las necesidades del sistema.
 # 5. Estrategias Arquitectónicas
@@ -132,11 +130,59 @@ Incluir el diseño y la estructura de la base de datos.
 
 # 7. Decisiones Arquitectónicas Clave 
 ## 7.1. Registro de Decisiones
-Registrar las decisiones arquitectónicas clave tomadas y la justificación detrás de ellas:
-### 7.1.1 Pros y Contras.
-### 7.1.2 Alternativas y balance de factores.
-### 7.1.3 Problemas potenciales.
-### 7.1.4 Dependencias a considerar.
+### 7.1.1 Utilización de Arquitectura Monolítica
+#### 7.1.1.1 Pros y Contras
+
+Pros:
+
+Facilidad en el desarrollo inicial: Simplifica la estructura y gestión del código, acelerando la implementación inicial del sistema.
+Despliegue sencillo: Al tener una sola aplicación unificada, las tareas de implementación, prueba y mantenimiento iniciales se facilitan considerablemente.
+Consistencia de datos y lógica centralizada: Facilita la gestión de transacciones y la integridad referencial dentro de la aplicación.
+Contras:
+
+Escalabilidad limitada: A largo plazo, la arquitectura monolítica puede presentar problemas de escalabilidad al incrementar la demanda de ciertos componentes específicos.
+Dificultad en actualizaciones independientes: Cualquier cambio o actualización afecta potencialmente a toda la aplicación, generando riesgos en el despliegue.
+Dependencia tecnológica: Dificulta utilizar diferentes tecnologías para diferentes módulos.
+#### 7.1.1.2 Alternativas y balance de factores
+
+Una alternativa considerada es la arquitectura basada en microservicios. Aunque esta última ofrece mejor escalabilidad y flexibilidad tecnológica, implica mayor complejidad y esfuerzo inicial en desarrollo, despliegue e infraestructura. Dado el tamaño inicial y la necesidad de validar rápidamente la solución, se optó por un monolito modular que posteriormente permita una transición gradual hacia microservicios cuando el crecimiento del sistema lo amerite.
+
+#### 7.1.1.3 Problemas potenciales
+
+Posibles cuellos de botella en componentes específicos.
+Dificultad para mantener equipos de desarrollo independientes trabajando simultáneamente.
+Mayor impacto de fallas, ya que un error grave podría afectar la totalidad del sistema.
+#### 7.1.1.4 Dependencias a considerar
+
+Clara definición de interfaces y dependencias internas entre módulos para facilitar futuras separaciones.
+Considerar herramientas y patrones de diseño que faciliten una futura migración a arquitecturas desacopladas, como uso de APIs internas claras y desacoplamiento funcional por módulos.
+### 7.1.2 Decisión: Utilización de Base de Datos Compartida
+#### 7.1.2.1 Pros y Contras
+
+Pros:
+
+Facilidad de implementación inicial: Un esquema centralizado simplifica considerablemente la gestión de datos, respaldos y recuperación.
+Integridad y consistencia de datos: Asegura la consistencia referencial, ya que todos los módulos acceden directamente a una misma fuente.
+Reducción de costos y complejidad operativa inicial: Una sola base de datos centralizada reduce gastos iniciales en infraestructura, licencias y mantenimiento.
+Contras:
+
+Limitaciones en escalabilidad futura: Una única base de datos puede convertirse en un cuello de botella si ciertos módulos requieren alta escalabilidad en términos de lectura/escritura.
+Riesgos de rendimiento: A medida que aumente el volumen de datos y operaciones concurrentes, puede haber degradación del rendimiento general del sistema.
+Mayor riesgo de bloqueos o conflictos: La concurrencia excesiva de consultas podría generar cuellos de botella o bloqueos frecuentes.
+#### 7.1.2.2 Alternativas y balance de factores
+
+La alternativa principal sería utilizar bases de datos independientes por módulo. Esto facilitaría la escalabilidad independiente y reduciría conflictos operativos. No obstante, esta opción añade complejidad al desarrollo inicial, gestión de transacciones distribuidas y operaciones. Dado el contexto actual del proyecto y la simplicidad requerida inicialmente, se optó por una base de datos compartida, asumiendo que en etapas posteriores se podrá segmentar o migrar la base de datos conforme sea necesario.
+
+#### 7.1.2.3 Problemas potenciales
+
+Posibles conflictos de acceso concurrente entre módulos del sistema.
+Incremento significativo en tiempo y esfuerzo requerido para optimizar consultas conforme crezca el volumen de datos.
+Dificultades potenciales para migrar posteriormente a bases de datos distribuidas, si las dependencias internas no están bien definidas desde un inicio.
+#### 7.1.2.4 Dependencias a considerar
+
+Claridad en los esquemas de datos utilizados por cada módulo para facilitar futuras migraciones o divisiones del modelo de datos.
+Uso cuidadoso y controlado de transacciones para minimizar bloqueos o conflictos internos.
+Estrategias tempranas de segmentación lógica dentro de la base de datos para facilitar la posterior separación física de módulos o servicios según las necesidades de escalabilidad.
 
 
 # 8. Atributos de Calidad 
