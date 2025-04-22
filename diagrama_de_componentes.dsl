@@ -9,8 +9,15 @@ workspace {
       description "Monitorea reportes y configura el sistema."
     }
 
+    bdEscolar = person "Base de Datos Escolar" {
+      description "Recibe notificaciones por inasistencias."
+      tags "Database"
+    }
     padre = person "Padre de Familia" {
       description "Recibe notificaciones por inasistencias."
+    }
+    dispositivo = person "Dispositivo QR/RFID"{
+        description "Estudiante registra asistencia en dispositivo"
     }
 
 
@@ -22,13 +29,13 @@ workspace {
         technology "React + Node.js + PostgreSQL"
         description "Aplicación unificada con todas las funcionalidades del sistema."
 
-        registroAsistencia = component "Registro de Asistencia" {
-          description "Permite registrar la asistencia de los estudiantes."
-          technology "React + Backend"
+        logica = component "Logica de Negocios" {
+          description "Permite registrar y consultar las asistencias."
+          technology "Spring Boot"
         }
 
         reportes = component "Gestión de Reportes" {
-          description "Genera reportes diarios, semanales y mensuales."
+          description "Genera reportes diarios, semanales, mensuales y a demanda."
           technology "Backend + Motor de reportes"
         }
 
@@ -43,39 +50,54 @@ workspace {
         }
 
         integracion = component "Integración de Datos" {
-          description "Sincroniza datos con sistemas escolares."
-          technology "REST API / CSV"
+          description "Sincroniza datos con sistemas escolares de Docentes y Estudiantes"
+          technology "Spring Batch"
         }
 
-        accesoDatos = component "Acceso a Datos" {
-          description "Gestiona las operaciones sobre la base de datos."
-          technology "ORM + SQL"
+        baseDeDatos = component "Base de Datos" {
+          description "Base de Datos"
+          tags "Database"
+          technology "Mysql"
         }
 
-        controladorWeb = component "Controlador Web" {
-          description "Gestiona las operacions http."
-          technology "Http"
+        controladorWeb = component "Interfaz de Usuario" {
+          description "Registro y visualizacion de las asistencias y reportes"
+          technology "React"
+        }
+        
+        registroAutomatico = component "Registro Automatico de Asistencia"{
+            description "Procesa los mensajes de los dispositivos sin contacto para asistencia automatica"
+            technology "Java"
+        }        
+        broker = component "Broker de Eventos"{
+            description "Recibe los mensajes de los dispositivos sin contacto para asistencia automatica"
+            tags "Broker"
+            technology "MQTT"
         }
 
         // Relaciones entre personas y componentes
         docente -> controladorWeb "Registra asistencia"
         docente -> controladorWeb "Consulta reportes de asistencia"
-        administrativo -> controladorWeb "Monitorea estadísticas"
         administrativo -> controladorWeb "Importa datos institucionales"
                 
-        controladorWeb -> registroAsistencia "Registra asistencia"
+        controladorWeb -> logica "Registra asistencia"
         controladorWeb -> reportes "Consulta reportes de asistencia"
-        controladorWeb -> reportes "Monitorea estadísticas"
-        controladorWeb -> integracion "Importa datos institucionales"
         
         padre -> notificaciones "Recibe notificaciones por inasistencias"
 
         // Relaciones internas entre componentes
-        registroAsistencia -> accesoDatos "Almacena y consulta asistencia"
-        reportes -> accesoDatos "Obtiene datos para reportes"
-        notificaciones -> accesoDatos "Consulta ausencias para alertas"
-        seguridad -> accesoDatos "Consulta credenciales y roles"
-        integracion -> accesoDatos "Sincroniza datos de estudiantes y docentes"
+        controladorWeb -> seguridad "Autoriza Usuarios"
+        logica -> baseDeDatos "Almacena y consulta asistencia"
+        reportes -> baseDeDatos "Obtiene datos para reportes"
+        notificaciones -> baseDeDatos "Consulta ausencias para alertas"
+        seguridad -> baseDeDatos "Consulta credenciales y roles"
+        
+        dispositivo -> broker "Dispositivo publica asistencias"
+        registroAutomatico -> broker "Se suscribe a recibir asistencias"
+        registroAutomatico -> baseDeDatos "Registra asistencia"
+        
+        bdEscolar -> integracion "Importa datos por medio de polling"
+        integracion -> baseDeDatos "Persiste los datos importados"
       }
     }
   }
@@ -113,6 +135,18 @@ workspace {
       element "Person" {
         shape person
         background #08427b
+        color #ffffff
+      }
+
+      element "Database" {
+        shape cylinder
+        background #589de1
+        color #ffffff
+      }
+
+      element "Broker" {
+        shape pipe
+        background #589de1
         color #ffffff
       }
     }
