@@ -78,7 +78,7 @@ El sistema estará compuesto por los siguientes componentes de alto nivel:
 ### 4.2.1. Interfaz de Usuario (Frontend):
 Desarrollada para ser accesible desde navegadores web y dispositivos móviles, esta interfaz proporcionará vistas personalizadas para docentes, personal administrativo y eventualmente padres de familia. Su diseño estará orientado a la usabilidad, con navegación clara y operaciones intuitivas.
 ### 4.2.2. Lógica de Negocio (Backend):
-Este componente gestionará los procesos centrales del sistema, como el registro y validación de asistencias, generación de reportes, programación de notificaciones y gestión de roles y permisos de usuarios. Se encargará también de interactuar con las bases de datos y servicios externos necesarios.
+Este componente gestionará los procesos centrales del sistema, como el registro y manejo de asistencias y gestión de roles y permisos de usuarios. Se encargará también de interactuar con las bases de datos y servicios externos necesarios.
 ### 4.2.3. Base de Datos:
 Almacenará toda la información relacionada con los usuarios, estudiantes, docentes, secciones académicas, registros de asistencia y logs del sistema. Se diseñará bajo principios de normalización y seguridad, contemplando integridad referencial y acceso controlado.
 ### 4.2.4. Modulo de Notificaciones:
@@ -86,11 +86,25 @@ Encargado de emitir alertas automáticas a los padres de familia mediante correo
 ### 4.2.5. Módulo de Seguridad y Autenticación:
 Gestionará el acceso al sistema mediante mecanismos de autenticación (usuario y contraseña, y eventualmente autenticación de doble factor), control de sesiones y asignación de roles, asegurando que cada usuario acceda solo a la información que le corresponde.
 Esta arquitectura de componentes está pensada para operar de manera cohesiva dentro de una estructura monolítica durante el prototipado inicial, permitiendo la validación funcional del sistema con una arquitectura sencilla pero completa. A futuro, esta estructura modular facilitará la migración hacia esquemas más distribuidos o escalables conforme evolucionen las necesidades del sistema.
+### 4.2.6. Módulo de Gestión de Reportes:
+El módulo de reportería está diseñado para proporcionar información consolidada y visualmente útil sobre los registros de asistencia generados en el sistema. Su objetivo es brindar a docentes, administradores y padres una visión clara del comportamiento de asistencia de los estudiantes a través de informes filtrables y exportables.
+Este módulo permite generar reportes por diferentes criterios como: Historial de asistencias por estudiante, consolidado de asistencias por fecha, docente o asignatura o Por tipo de evento: ausencias frecuentes, llegadas tarde, registros editados.
+### 4.2.7. Módulo de Asistencia automatica:
+El módulo de asistencia automática tiene como propósito modernizar y agilizar el proceso de registro de asistencia mediante el uso de tecnologías sin contacto, como códigos QR o tarjetas RFID.
+Ambas tecnologías permiten reducir el tiempo de registro, minimizar errores humanos y evitar manipulación física. Este módulo está preparado para trabajar en conjunto con el módulo de seguridad, validando que los registros se hagan desde dispositivos autorizados, en horarios válidos y con trazabilidad completa.
+### 4.2.8. Módulo de Integracion de Datos:
+El componente de integración de datos tiene como objetivo facilitar la migración y sincronización de información de estudiantes y docentes provenientes de sistemas o bases de datos existentes hacia la base de datos del sistema de control de asistencia.
+Este componente importara los datos por medio de polling de forma periodica, permitiendo mantener sincronizados los datos clave entre sistemas.
+
 # 5. Estrategias Arquitectónicas
 ## 5.1. Estrategias Clave
 La estrategia arquitectónica del sistema de control de asistencia estudiantil se basa inicialmente en una arquitectura de monolito modular. Esta decisión permite aprovechar los beneficios inmediatos del monolito, tales como simplicidad de desarrollo, facilidad en la implementación inicial y reducción en la complejidad operativa. Sin embargo, se ha diseñado con módulos claramente separados por responsabilidad funcional, lo que facilita futuras transiciones arquitectónicas.
 
-El enfoque modular permite que, en etapas posteriores, ciertos módulos puedan evolucionar de forma independiente hacia una arquitectura de microservicios, particularmente aquellos que experimenten mayor demanda o requieran escalabilidad independiente. Esto asegurará que el sistema mantenga su rendimiento y disponibilidad, adaptándose gradualmente a necesidades crecientes sin implicar rediseños profundos o interrupciones significativas del servicio..
+El enfoque modular permite que, en etapas posteriores, ciertos módulos puedan evolucionar de forma independiente hacia una arquitectura de microservicios, particularmente aquellos que experimenten mayor demanda o requieran escalabilidad independiente. Esto asegurará que el sistema mantenga su rendimiento y disponibilidad, adaptándose gradualmente a necesidades crecientes sin implicar rediseños profundos o interrupciones significativas del servicio.
+
+El sistema será instalado en un entorno de computación en la nube con el fin de garantizar escalabilidad, alta disponibilidad y acceso remoto desde múltiples dispositivos. Esta decisión permite que el sistema crezca de forma dinámica según la demanda, sin depender de infraestructura física local. Además, al estar en la nube, se facilita la disponibilidad continua del servicio (24/7), la tolerancia a fallos, y la posibilidad de implementar medidas de seguridad avanzadas, copias de respaldo automáticas y actualizaciones centralizadas.
+
+Para integrar dispositivos de lectura sin contacto (como escáneres QR o lectores RFID) con el sistema de asistencia, se utilizará un broker de eventos que actuará como intermediario entre los dispositivos y el backend. Este enfoque permite una comunicación asincrónica, segura y escalable, donde cada registro de asistencia generado por un dispositivo se publica como un evento en tiempo real. El sistema suscribe estos eventos, los valida y los almacena de forma eficiente. Esta arquitectura facilita el manejo de múltiples dispositivos conectados simultáneamente y asegura la trazabilidad de cada registro.
 
 # 6. Arquitectura del Sistema
 ## 6.1. Resumen de Capas/Módulos
@@ -122,67 +136,162 @@ Implementa mecanismos de autenticación de usuarios, control de acceso por roles
 Tecnologías: OAuth2.
 Características clave: confidencialidad, integridad, autenticación robusta.
 
+### 6.1.7.  Módulo de Reporteria:
+Este módulo permite la generación de reportes detallados sobre el comportamiento de asistencia a nivel individual, grupal o institucional. Facilita la obtención de estadísticas, tendencias y alertas relevantes para la toma de decisiones académicas y administrativas. Ofrece reportes filtrables por fecha, sección, docente o estudiante, y permite su visualización en formato tabular o gráfico.
+
+Tecnologías: React (frontend), bibliotecas de visualización como Recharts.
+Características clave: visualización clara, exportación, personalización de filtros.
+
+### 6.1.8.  Módulo de Asistencia Automatica:
+Encargado de registrar la asistencia de estudiantes de forma automatizada utilizando dispositivos sin contacto, como lectores RFID o escáneres de códigos QR. Este módulo se comunica con el sistema principal a través de un broker de eventos, lo que permite una integración en tiempo real, asincrónica y escalable, capaz de manejar múltiples dispositivos simultáneamente.
+
+Tecnologías: lectores RFID/QR, broker de eventos MQTT.
+Características clave: automatización, baja latencia, escalabilidad horizontal.
+
+### 6.1.8.  Módulo de Integracion:
+Este modulo se encargará de importar los datos de estudiantes y docentes desde bases de datos existentes hacia la base de datos del sistema. El proceso se llevara a cabo por medio de polling de datos periodicamente.
+
+Tecnologías: Spring Batch.
+Características clave: automatización, integracion.
+
 ## 6.2 Diagramas de Componentes
-Incluir cualquier diagrama de componentes relevante que ilustre partes significativas del sistema.
+https://structurizr.com/workspace/101068/dsl
 
 ## 6.3 Diseño de la Base de Datos
-Incluir el diseño y la estructura de la base de datos.
+https://drive.google.com/file/d/1J0Ylmk1GgHP58VlPvvFTAXM4ytP9pMAF/view?usp=sharing
 
 # 7. Decisiones Arquitectónicas Clave 
 ## 7.1. Registro de Decisiones
-### 7.1.1 Utilización de Arquitectura Monolítica
+### 7.1.1 Decisión: Utilización de Arquitectura Monolítica Modular
+
 #### 7.1.1.1 Pros y Contras
 
-Pros:
+Pros: organización clara, reusabilidad de código, base sólida para futura migración a microservicios.Contras: requiere disciplina en la separación interna, riesgo de crecimiento desordenado si no se controla.
 
-Facilidad en el desarrollo inicial: Simplifica la estructura y gestión del código, acelerando la implementación inicial del sistema.
-Despliegue sencillo: Al tener una sola aplicación unificada, las tareas de implementación, prueba y mantenimiento iniciales se facilitan considerablemente.
-Consistencia de datos y lógica centralizada: Facilita la gestión de transacciones y la integridad referencial dentro de la aplicación.
-Contras:
-
-Escalabilidad limitada: A largo plazo, la arquitectura monolítica puede presentar problemas de escalabilidad al incrementar la demanda de ciertos componentes específicos.
-Dificultad en actualizaciones independientes: Cualquier cambio o actualización afecta potencialmente a toda la aplicación, generando riesgos en el despliegue.
-Dependencia tecnológica: Dificulta utilizar diferentes tecnologías para diferentes módulos.
 #### 7.1.1.2 Alternativas y balance de factores
 
-Una alternativa considerada es la arquitectura basada en microservicios. Aunque esta última ofrece mejor escalabilidad y flexibilidad tecnológica, implica mayor complejidad y esfuerzo inicial en desarrollo, despliegue e infraestructura. Dado el tamaño inicial y la necesidad de validar rápidamente la solución, se optó por un monolito modular que posteriormente permita una transición gradual hacia microservicios cuando el crecimiento del sistema lo amerite.
+Una arquitectura monolítica no modular limita la escalabilidad interna. Microservicios desde el inicio pueden ser excesivos y costosos para un sistema en fase inicial.
 
 #### 7.1.1.3 Problemas potenciales
 
-Posibles cuellos de botella en componentes específicos.
-Dificultad para mantener equipos de desarrollo independientes trabajando simultáneamente.
-Mayor impacto de fallas, ya que un error grave podría afectar la totalidad del sistema.
+Aumento del acoplamiento si no se respetan los límites modulares. Dificultad para dividir componentes si no se planifica bien.
+
 #### 7.1.1.4 Dependencias a considerar
 
-Clara definición de interfaces y dependencias internas entre módulos para facilitar futuras separaciones.
-Considerar herramientas y patrones de diseño que faciliten una futura migración a arquitecturas desacopladas, como uso de APIs internas claras y desacoplamiento funcional por módulos.
+Convenciones internas de diseño, estructura de paquetes, y separación lógica entre dominios funcionales.
+
 ### 7.1.2 Decisión: Utilización de Base de Datos Compartida
+
 #### 7.1.2.1 Pros y Contras
 
-Pros:
+Pros: simplicidad, rendimiento, consistencia de datos centralizada.Contras: acoplamiento entre módulos, riesgo de colisiones en el esquema si no hay control.
 
-Facilidad de implementación inicial: Un esquema centralizado simplifica considerablemente la gestión de datos, respaldos y recuperación.
-Integridad y consistencia de datos: Asegura la consistencia referencial, ya que todos los módulos acceden directamente a una misma fuente.
-Reducción de costos y complejidad operativa inicial: Una sola base de datos centralizada reduce gastos iniciales en infraestructura, licencias y mantenimiento.
-Contras:
-
-Limitaciones en escalabilidad futura: Una única base de datos puede convertirse en un cuello de botella si ciertos módulos requieren alta escalabilidad en términos de lectura/escritura.
-Riesgos de rendimiento: A medida que aumente el volumen de datos y operaciones concurrentes, puede haber degradación del rendimiento general del sistema.
-Mayor riesgo de bloqueos o conflictos: La concurrencia excesiva de consultas podría generar cuellos de botella o bloqueos frecuentes.
 #### 7.1.2.2 Alternativas y balance de factores
 
-La alternativa principal sería utilizar bases de datos independientes por módulo. Esto facilitaría la escalabilidad independiente y reduciría conflictos operativos. No obstante, esta opción añade complejidad al desarrollo inicial, gestión de transacciones distribuidas y operaciones. Dado el contexto actual del proyecto y la simplicidad requerida inicialmente, se optó por una base de datos compartida, asumiendo que en etapas posteriores se podrá segmentar o migrar la base de datos conforme sea necesario.
+Bases de datos separadas por módulo ofrecen más aislamiento pero aumentan la complejidad. La base de datos compartida es más adecuada para monolitos bien estructurados.
 
 #### 7.1.2.3 Problemas potenciales
 
-Posibles conflictos de acceso concurrente entre módulos del sistema.
-Incremento significativo en tiempo y esfuerzo requerido para optimizar consultas conforme crezca el volumen de datos.
-Dificultades potenciales para migrar posteriormente a bases de datos distribuidas, si las dependencias internas no están bien definidas desde un inicio.
+Cambios no coordinados entre módulos pueden romper la integridad. Dificultades al escalar partes específicas si los datos están demasiado entrelazados.
+
 #### 7.1.2.4 Dependencias a considerar
 
-Claridad en los esquemas de datos utilizados por cada módulo para facilitar futuras migraciones o divisiones del modelo de datos.
-Uso cuidadoso y controlado de transacciones para minimizar bloqueos o conflictos internos.
-Estrategias tempranas de segmentación lógica dentro de la base de datos para facilitar la posterior separación física de módulos o servicios según las necesidades de escalabilidad.
+Diseño del modelo relacional, convenciones de acceso, políticas de migración y versionado del esquema.
+
+
+### 7.1.3 Decisión: Importar datos de estudiantes y docentes en lugar de usar sistema existente
+
+#### 7.1.3.1 Pros y Contras
+
+Pros: independencia del sistema actual, control total sobre los datos, limpieza del modelo.
+Contras: requiere procesos de migración y mantenimiento de integridad entre sistemas.
+
+#### 7.1.3.2 Alternativas y balance de factores
+
+La alternativa era conectarse directamente al sistema académico existente, pero implicaba fuerte acoplamiento, riesgos de seguridad y dependencia tecnológica.
+
+#### 7.1.3.3 Problemas potenciales
+
+Inconsistencias si la migración no es frecuente o automatizada. Riesgo de duplicación o datos desactualizados.
+
+#### 7.1.3.4 Dependencias a considerar
+
+Fuentes externas de datos (bases de datos, archivos, APIs) y un componente de integración confiable.
+
+### 7.1.4 Decisión: Se usará una arquitectura en cloud pero se mantendrá una lista blanca por MAC
+
+#### 7.1.4.1 Pros y Contras
+
+Pros: alta disponibilidad, acceso remoto, escalabilidad.
+Contras: exposición a internet, requiere medidas adicionales de control.
+
+#### .1.4.2 Alternativas y balance de factores
+
+Una instalación local reduciría el riesgo de exposición, pero limitaría el acceso remoto y la escalabilidad.
+
+#### 7.1.4.3 Problemas potenciales
+
+Restricción de conectividad desde dispositivos legítimos por errores en listas MAC o entornos dinámicos.
+
+#### 7.1.4.4 Dependencias a considerar
+
+Infraestructura cloud, capa de red con control por MAC, y gestión de dispositivos autorizados.
+
+### 7.1.5 Decisión: Utilización de MVC
+
+#### 7.1.5.1 Pros y Contras
+
+Pros: separación clara de responsabilidades, mantenibilidad y escalabilidad.
+Contras: puede parecer más complejo en sistemas pequeños.
+
+#### 7.1.5.2 Alternativas y balance de factores
+
+Arquitecturas monolíticas no estructuradas ofrecen velocidad inicial pero dificultan el mantenimiento futuro.
+
+#### 7.1.5.3 Problemas potenciales
+
+Desalineación entre capas si no se definen bien los contratos y responsabilidades.
+
+#### 7.1.5.4 Dependencias a considerar
+
+Estructura del framework (Spring Boot), diseño del frontend (React), y flujo de datos entre capas.
+
+### 7.1.6 Decisión: Utilización de DTO
+
+#### 7.1.6.1 Pros y Contras
+
+Pros: encapsula los datos, mejora seguridad y control sobre lo que se expone.
+Contras: requiere más código y lógica de transformación.
+
+#### 7.1.6.2 Alternativas y balance de factores
+
+Exponer directamente las entidades JPA sería más rápido, pero aumenta el acoplamiento y el riesgo de filtrado de datos sensibles.
+
+#### 7.1.6.3 Problemas potenciales
+
+Desincronización entre DTOs y entidades si no se actualizan correctamente.
+
+#### 7.1.6.4 Dependencias a considerar
+
+Nada muy relevante por el contexto de uso.
+
+### 7.1.7 Decisión: Usar un broker de eventos para la conectividad entre dispositivos y el sistema
+
+#### 7.1.7.1 Pros y Contras
+
+Pros: integración desacoplada, asincronía, escalabilidad.Contras: complejidad adicional, necesidad de supervisión del broker.
+
+#### 7.1.7.2 Alternativas y balance de factores
+
+La alternativa era conexión directa por API, pero eso generaría acoplamiento y dificultades en tiempo real.
+
+#### 7.1.7.3 Problemas potenciales
+
+Pérdida de mensajes, duplicación, o falta de procesamiento si no se configuran bien los listeners o las colas.
+
+#### 7.1.7.4 Dependencias a considerar
+
+Broker elegido (RabbitMQ, Kafka, etc.), configuración de colas, y formato de eventos compartidos.
 
 
 # 8. Atributos de Calidad 
