@@ -187,30 +187,106 @@ Estrategias tempranas de segmentación lógica dentro de la base de datos para f
 
 # 8. Atributos de Calidad 
 ## 8.1. Rendimiento
-Describir los requisitos de rendimiento y cómo la arquitectura los respalda.
+### Descripción: Medida de la capacidad del sistema para responder en tiempo y manejar carga de trabajo sin degradar su funcionamiento.
+ - Fuente: Usuario o componente interno genera una petición al sistema
+ - Estímulo: Llegada de eventos concurrentes o picos de carga (p. ej., inicio de ciclo escolar)
+ - Entorno: Modo operativo normal o de máxima demanda 
+ - Respuesta: El sistema atiende las solicitudes dentro de los límites de latencia acordados 
+ - Métrica: El 95 % de las respuestas debe tener una latencia < 200 ms bajo pico de carga 
+
+ ### Nota
+ - Se tomará como mecanismos de rendimiento, la utilizacion de cache en memoria para menor tiempo en acceso a la data.
 
 ## 8.2. Escalabilidad
-Describir las consideraciones y estrategias de escalabilidad.
+### Descripción: Capacidad del sistema para crecer en usuarios, datos y transacciones sin perder calidad de servicio.
+ - Fuente: Administración de una nueva escuela solicita integración masiva 
+ - Estímulo: Registro de cientos de usuarios y volcado histórico de datos 
+ - Entorno: Períodos de alta concurrencia (pico de ciclos académicos) 
+ - Respuesta: La arquitectura escala automáticamente mediante particionamiento y réplicas  
+ - Métrica: Soporta linealmente ≥ 50 profesores simultáneos con degradación < 10 % en rendimiento
+
+### Nota
+ - Se realizará la utilizacion de un proceso de normalizacion de hasta 3 o 4 grados de la base de datos, para soportar la escalabilidad del sistema
 
 ## 8.3. Seguridad
-Describir las medidas de seguridad y consideraciones dentro de la arquitectura.
+### Descripción: Protección de la confidencialidad, integridad y disponibilidad de los datos.
+ - Fuente: Actor malicioso o usuario no autenticado intenta acceso 
+ - Estímulo: Petición de recursos sensibles (datos personales, administrativos) 
+ - Entorno: Operación normal del sistema o ataque dirigido (inyección, fuerza bruta) 
+ - Respuesta:
+ - - Autenticación robusta (AuthN) con múltiples factores  
+ - - Encriptación de datos en reposo (AES‑256) y en tránsito (TLS 1.2+) 
+ - Métrica:
+ - - 100 % de las peticiones a datos sensibles requieren autenticación.
+ - - Cumplimiento de ASVS nivel 2 para controles críticos
 
 ## 8.4. Mantenibilidad
-Describir cómo se ha diseñado el sistema para facilitar su mantenimiento.
+### Descripción: Facilidad con que el sistema puede modificarse, corregirse o extenderse tras su entrega.
+ - Fuente: Equipo de desarrollo requiriendo cambios o correcciones 
+ - Estímulo: Bug reportado o nueva funcionalidad solicitada 
+ - Entorno: Ciclo de mantenimiento o sprint de mejora continua 
+ - Respuesta:
+ - - Código modularizado y desacoplado según principios SOLID 
+ - - Cobertura de pruebas automatizadas y documentación técnica actualizada 
+ - Métrica:
+ - - Reducción ≥ 30 % en tiempo medio de implementación de cambios gracias a modularidad y tests
 
 # 9. Riesgos y Deuda Técnica 
 ## 9.1. Riesgos Identificados
-Enumerar los riesgos identificados y su posible impacto en el proyecto.
+### A continuación, se presentan los principales riesgos detectados en el desarrollo del sistema de control de asistencia, junto con su posible impacto:
+- ####  Cambio frecuente de requerimientos funcionales
+ - Impacto: Retrasos en el desarrollo, aumento de costos y re-trabajo en módulos ya implementados.
+ - Mitigación: Establecer una fase de levantamiento de requerimientos bien definida y validada con las partes interesadas antes de iniciar el desarrollo.
+- #### Limitaciones de la arquitectura monolítica en escalabilidad futura
+ - Impacto: Dificultad para adaptar el sistema a múltiples instituciones o escenarios de alta demanda.
+ - Mitigación: Modularizar desde el inicio y planificar una futura transición hacia microservicios si el crecimiento lo requiere.
+- #### Problemas de rendimiento en momentos de alta concurrencia
+ - Impacto: Latencia elevada o fallas del sistema durante picos de uso (por ejemplo, inicio de jornada escolar).
+ - Mitigación: Implementar caching en memoria y diseñar consultas optimizadas desde el backend y la base de datos.
+- #### Fallas en la seguridad de datos personales y académicos
+ - Impacto: Posibles vulneraciones de privacidad y pérdida de confianza por parte de la comunidad educativa.
+ - Mitigación: Uso de autenticación robusta, cifrado de datos (AES-256 y TLS 1.2+), y control estricto de accesos.
+- #### Dependencia de tecnologías específicas o versiones de software
+ - Impacto: Dificultades para actualizar o integrar nuevos componentes en el futuro.
+ - Mitigación: Mantener un registro de versiones, aplicar principios de bajo acoplamiento y usar tecnologías estándar ampliamente soportadas.
 
 ## 9.2. Deuda Técnica
-Describir cualquier área de deuda técnica y los planes para su resolución.
+### Durante la planificación y desarrollo del prototipo, se identifican las siguientes áreas donde podría generarse deuda técnica:
+
 
 # 10. Apéndices 
-##10.1. Glosario
-Proporcionar un glosario de términos utilizados a lo largo del documento.
+## 10.1. Glosario
+### Proporcionar un glosario de términos utilizados a lo largo del documento.
+ - ASVS: Estándar de verificación de seguridad de aplicaciones, utilizado para evaluar controles de seguridad en software.
+ - AES-256: Algoritmo de encriptación de alta seguridad utilizado para proteger datos en reposo.
+ - AuthN: Abreviatura de “Authentication”; se refiere al proceso de autenticación de usuarios.
+ - Backend: Parte lógica del sistema que maneja procesos internos, reglas de negocio y gestión de datos.
+ - Base de Datos Normalizada: Estructura de datos optimizada para evitar redundancias y mejorar la integridad de la información.
+ - Cache: Memoria temporal utilizada para acelerar el acceso a datos frecuentemente solicitados.
+ - Ciclo de Mantenimiento: Etapa del ciclo de vida del software dedicada a correcciones, mejoras y ajustes posteriores al despliegue.
+ - Control de Accesos: Mecanismo para restringir el acceso a información o funcionalidades del sistema según el rol del usuario.
+ - Códigos QR: Códigos visuales bidimensionales escaneables, utilizados para automatizar procesos como el registro de asistencia.
+ - Documentación Técnica: Conjunto de archivos que describen cómo funciona un sistema, destinado a desarrolladores y equipos técnicos.
+ - Disponibilidad: Medida del tiempo en que un sistema está accesible y operativo para los usuarios.
+ - Frontend: Interfaz gráfica del sistema que permite la interacción directa del usuario.
+ - Latencia: Tiempo de respuesta entre una solicitud realizada y la respuesta entregada por el sistema.
+ - Microservicios: Estilo arquitectónico que divide una aplicación en servicios independientes y especializados.
+ - OAuth2: Protocolo de autorización que permite compartir información segura entre sistemas.
+ - Persistencia de Datos: Capacidad del sistema para almacenar y conservar información de forma permanente.
+ - Rendimiento: Habilidad del sistema para responder con eficiencia ante la carga de usuarios o procesos.
+ - RFID: Tecnología de identificación por radiofrecuencia usada para automatizar el registro de objetos o personas.
+ - Roles: Perfiles de usuario con permisos y accesos definidos dentro del sistema.
+ - Escalabilidad: Capacidad del sistema para adaptarse al crecimiento de usuarios, datos o transacciones sin degradar su desempeño.
+ - Sistema Monolítico: Modelo de arquitectura donde todos los componentes de software están integrados en una sola aplicación.
+ - SOLID: Conjunto de cinco principios para escribir código limpio, mantenible y escalable.
+ - TLS 1.2+: Protocolo criptográfico utilizado para asegurar la comunicación entre cliente y servidor.
+ - Usabilidad: Facilidad con la que los usuarios pueden aprender a usar y operar un sistema eficientemente.
 
 ## 10.2. Índice
 Incluir un índice de términos y secciones para facilitar la navegación.
 
 # 10.3. Historial de Revisión
 Documentar el historial de revisiones de este documento.
+- Fecha	Versión	Descripción	Autor
+- 2025‑04‑12	1.0	Creación del documento y tabulación de encabezados.	Equipo Arquitectura
+- 2025‑04‑20	1.1	Creacion de glosario, atributos de calidad, riesgos y deuda técnica. Equipo Arquitectura
