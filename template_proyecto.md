@@ -78,7 +78,7 @@ El sistema estará compuesto por los siguientes componentes de alto nivel:
 ### 4.2.1. Interfaz de Usuario (Frontend):
 Desarrollada para ser accesible desde navegadores web y dispositivos móviles, esta interfaz proporcionará vistas personalizadas para docentes, personal administrativo y eventualmente padres de familia. Su diseño estará orientado a la usabilidad, con navegación clara y operaciones intuitivas.
 ### 4.2.2. Lógica de Negocio (Backend):
-Este componente gestionará los procesos centrales del sistema, como el registro y validación de asistencias, generación de reportes, programación de notificaciones y gestión de roles y permisos de usuarios. Se encargará también de interactuar con las bases de datos y servicios externos necesarios.
+Este componente gestionará los procesos centrales del sistema, como el registro y manejo de asistencias y gestión de roles y permisos de usuarios. Se encargará también de interactuar con las bases de datos y servicios externos necesarios.
 ### 4.2.3. Base de Datos:
 Almacenará toda la información relacionada con los usuarios, estudiantes, docentes, secciones académicas, registros de asistencia y logs del sistema. Se diseñará bajo principios de normalización y seguridad, contemplando integridad referencial y acceso controlado.
 ### 4.2.4. Modulo de Notificaciones:
@@ -86,13 +86,13 @@ Encargado de emitir alertas automáticas a los padres de familia mediante correo
 ### 4.2.5. Módulo de Seguridad y Autenticación:
 Gestionará el acceso al sistema mediante mecanismos de autenticación (usuario y contraseña, y eventualmente autenticación de doble factor), control de sesiones y asignación de roles, asegurando que cada usuario acceda solo a la información que le corresponde.
 Esta arquitectura de componentes está pensada para operar de manera cohesiva dentro de una estructura monolítica durante el prototipado inicial, permitiendo la validación funcional del sistema con una arquitectura sencilla pero completa. A futuro, esta estructura modular facilitará la migración hacia esquemas más distribuidos o escalables conforme evolucionen las necesidades del sistema.
-### 4.2.6. Módulo de Reporteria:
+### 4.2.6. Módulo de Gestión de Reportes:
 El módulo de reportería está diseñado para proporcionar información consolidada y visualmente útil sobre los registros de asistencia generados en el sistema. Su objetivo es brindar a docentes, administradores y padres una visión clara del comportamiento de asistencia de los estudiantes a través de informes filtrables y exportables.
 Este módulo permite generar reportes por diferentes criterios como: Historial de asistencias por estudiante, consolidado de asistencias por fecha, docente o asignatura o Por tipo de evento: ausencias frecuentes, llegadas tarde, registros editados.
 ### 4.2.7. Módulo de Asistencia automatica:
 El módulo de asistencia automática tiene como propósito modernizar y agilizar el proceso de registro de asistencia mediante el uso de tecnologías sin contacto, como códigos QR o tarjetas RFID.
 Ambas tecnologías permiten reducir el tiempo de registro, minimizar errores humanos y evitar manipulación física. Este módulo está preparado para trabajar en conjunto con el módulo de seguridad, validando que los registros se hagan desde dispositivos autorizados, en horarios válidos y con trazabilidad completa.
-### 4.2.8. Módulo de Integracion de Estudiantes y Docentes:
+### 4.2.8. Módulo de Integracion de Datos:
 El componente de integración de datos tiene como objetivo facilitar la migración y sincronización de información de estudiantes y docentes provenientes de sistemas o bases de datos existentes hacia la base de datos del sistema de control de asistencia.
 Este componente importara los datos por medio de polling de forma periodica, permitiendo mantener sincronizados los datos clave entre sistemas.
 
@@ -155,10 +155,10 @@ Tecnologías: Spring Batch.
 Características clave: automatización, integracion.
 
 ## 6.2 Diagramas de Componentes
-Incluir cualquier diagrama de componentes relevante que ilustre partes significativas del sistema.
+https://structurizr.com/workspace/101068/dsl
 
 ## 6.3 Diseño de la Base de Datos
-Incluir el diseño y la estructura de la base de datos.
+https://drive.google.com/file/d/1J0Ylmk1GgHP58VlPvvFTAXM4ytP9pMAF/view?usp=sharing
 
 # 7. Decisiones Arquitectónicas Clave 
 ## 7.1. Registro de Decisiones
