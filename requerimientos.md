@@ -6,7 +6,7 @@
  - Generar reportes de asistencia para docentes y administración.
  - Integrar el sistema con la base de datos de estudiantes y docentes.
  - Garantizar la seguridad y privacidad de los datos de los estudiantes.
- - Permitir acceso a los registros de asistencia desde cualquier dispositivo autorizado.
+ - Permitir acceso a los registros de asistencia a desde cualquier dispositivo autorizado.
 
 ## 2. Requerimientos Funcionales
 
