@@ -11,13 +11,15 @@ Este documento detalla los fundamentos técnicos y conceptuales de la arquitectu
 El presente proyecto tiene como objetivo el diseño y prototipado de una arquitectura de sistema destinada a gestionar el control de asistencia estudiantil en instituciones educativas de nivel primario y secundario. Esta solución estará enfocada en automatizar y optimizar los procesos relacionados con el registro, consulta y reporte de asistencia, permitiendo una administración más eficiente y segura de la información.
 
 ## 1.3. Definiciones, Acrónimos y Abreviaturas
-Proporcionar definiciones para los términos y acrónimos utilizados a lo largo del documento.
+API (Application Programming Interface): Conjunto de endpoints y reglas que permiten que dos aplicaciones se comuniquen. El backend Spring Boot expone una API REST consumida por el frontend.
+MQTT (Message Queuing Telemetry Transport): Protocolo ligero de mensajería ideal para dispositivos de baja potencia. En el sistema se utiliza para integrar lectores de QR o RFID con el backend.
+DTO (Data Transfer Object): Objeto utilizado para transportar datos entre capas de la aplicación, evitando exponer directamente las entidades del modelo de dominio. Se usa para mantener el desacoplamiento entre el backend y la capa de presentación.
 
 ## 1.4. Referencias
-Enumerar otros documentos, sitios web o materiales referenciados en este documento.
+N/A.
 
 ## 1.5. Resumen
-Proporcionar un breve resumen de las secciones siguientes del documento.
+Este documento detalla la arquitectura del sistema de control de asistencia estudiantil desarrollado como un monolito modular, justificado por su simplicidad en etapas iniciales y con la posibilidad de escalar a microservicios en el futuro. Se identifican las partes interesadas (docentes, administración, padres, estudiantes y equipo técnico) y sus principales preocupaciones, como seguridad, rendimiento y usabilidad. Se ofrece una visión general del sistema incluyendo su estructura lógica, estrategias arquitectónicas aplicadas como el uso de MQTT para integración con dispositivos, despliegue en la nube con control de acceso por MAC y separación de capas funcionales. La arquitectura del sistema se describe en detalle, abarcando sus módulos, diagramas de componentes y diseño de base de datos. Además, se registran decisiones arquitectónicas clave con sus pros, contras y dependencias, se enumeran atributos de calidad esperados, y se analizan posibles riesgos y elementos de deuda técnica que podrían requerir atención en fases posteriores.
 
 # 2. Representación Arquitectónica 
 ## 2.1.Estilo Arquitectónico y Justificación
